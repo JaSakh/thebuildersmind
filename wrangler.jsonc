@@ -1,0 +1,12 @@
+{
+  // Cloudflare Workers static hosting. `npm run build` writes the site to ./out,
+  // `npm run deploy` builds and uploads it.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "thebuildersmind",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  }
+}

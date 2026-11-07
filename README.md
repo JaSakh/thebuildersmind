@@ -45,12 +45,18 @@ The episode page, founder directory, sitemap and search all update automatically
 - [ ] Add `notes` + `takeaways` to your top 5 episodes
 - [ ] Optional: replace `src/app/favicon.ico` with your logo
 
-## Put it online (free)
-**Vercel (easiest):** push this folder to a GitHub repo → vercel.com → "Add New Project" →
-import the repo → Deploy. Add `NEXT_PUBLIC_FORM_ENDPOINT` under Settings → Environment Variables.
-Then connect your domain (e.g. thebuildersmind.com is currently parked at GoDaddy).
+## Put it online (free): Cloudflare
+Hosted as a Cloudflare Worker serving the static `out/` folder (config: `wrangler.jsonc`).
+Live at https://thebuildersmind.ahmadjahids.workers.dev
 
-**Any other host:** run `npm run build` and upload the `out/` folder.
+- **Automatic:** every push to `main` rebuilds and redeploys (Cloudflare Workers Builds,
+  connected in the dashboard under Workers & Pages → thebuildersmind → Settings → Builds).
+- **By hand:** `npm run deploy` (needs `npx wrangler login` once).
+- **Preview the production build locally:** `npm run preview`.
+- **Form endpoint:** add `NEXT_PUBLIC_FORM_ENDPOINT` under Settings → Build → Variables
+  (it's read at build time, so it must be a *build* variable).
+- **Domain:** add thebuildersmind.com to the same Cloudflare account, then
+  Settings → Domains & Routes → Add → Custom domain.
 
 ## Ideas for later
 - Pull new episodes automatically from the YouTube API instead of editing `episodes.ts`
