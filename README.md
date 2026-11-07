@@ -58,6 +58,14 @@ Live at https://thebuildersmind.ahmadjahids.workers.dev
 - **Domain:** add thebuildersmind.com to the same Cloudflare account, then
   Settings → Domains & Routes → Add → Custom domain.
 
+## GitHub Pages (temporary home)
+`.github/workflows/pages.yml` builds and publishes the site on every push to `main`.
+It is served from https://jasakh.github.io/thebuildersmind/ (the workflow sets
+`PAGES_BASE_PATH` so links work under `/thebuildersmind/`).
+One-time setup by the repo owner: Settings → Pages → Source: **GitHub Actions**.
+Form endpoint for this build: Settings → Secrets and variables → Actions → Variables →
+`NEXT_PUBLIC_FORM_ENDPOINT`.
+
 ## Ideas for later
 - Pull new episodes automatically from the YouTube API instead of editing `episodes.ts`
 - Per-episode timestamps / chapters
