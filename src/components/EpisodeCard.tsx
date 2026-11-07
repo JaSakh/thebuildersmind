@@ -15,9 +15,11 @@ export default function EpisodeCard({ ep }: { ep: Episode }) {
           loading="lazy"
           className="h-full w-full object-cover opacity-90 transition group-hover:scale-[1.03] group-hover:opacity-100"
         />
-        <span className="absolute bottom-2 right-2 rounded bg-black/80 px-1.5 py-0.5 font-mono text-xs">
-          {ep.duration}
-        </span>
+        {ep.duration && (
+          <span className="absolute bottom-2 right-2 rounded bg-black/80 px-1.5 py-0.5 font-mono text-xs">
+            {ep.duration}
+          </span>
+        )}
         {ep.kind === "tutorial" && (
           <span className="absolute left-2 top-2 rounded bg-brand px-2 py-0.5 text-xs font-semibold">
             Tutorial

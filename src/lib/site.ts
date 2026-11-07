@@ -12,11 +12,11 @@ export const site = {
   links: {
     youtube: "https://www.youtube.com/@thebuildersmind",
     youtubeSubscribe: "https://www.youtube.com/@thebuildersmind?sub_confirmation=1",
-    // TODO: check these against the links on your YouTube channel
-    linkedin: "https://www.linkedin.com/company/the-builders-mind-podcast",
+    // Taken from the channel's video descriptions (Nov 2026)
+    linkedin: "https://www.linkedin.com/company/the-builder-s-mind-podcast/",
     instagram: "https://www.instagram.com/buildersmind_podcast",
-    spotify: "https://open.spotify.com/",
-    tiktok: "https://www.tiktok.com/@buildersmind",
+    spotify: "https://open.spotify.com/show/6T0qXsHa5Uy9VCp1xSDA1k",
+    tiktok: "https://www.tiktok.com/@buildersmind_pod",
   },
   // Paste a form endpoint (e.g. from formspree.io) in .env.local:
   //   NEXT_PUBLIC_FORM_ENDPOINT=https://formspree.io/f/xxxxxxx

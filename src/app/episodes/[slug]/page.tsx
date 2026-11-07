@@ -2,9 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import EpisodeCard from "@/components/EpisodeCard";
+import EpisodePlayer from "@/components/EpisodePlayer";
 import Newsletter from "@/components/Newsletter";
 import { episodes, getEpisode, related, slugOf, thumb, watchUrl } from "@/lib/episodes";
 import { site } from "@/lib/site";
+
+const truncate = (s: string, n: number) =>
+  s.length <= n ? s : s.slice(0, s.lastIndexOf(" ", n - 1)).replace(/[,;:.!?-]+$/, "") + "…";
+
+// ISO 8601 duration for search engines, e.g. 2147 -> "PT35M47S"
+const isoDuration = (sec: number) =>
+  `PT${Math.floor(sec / 3600) ? `${Math.floor(sec / 3600)}H` : ""}${Math.floor((sec % 3600) / 60)}M${sec % 60}S`;
 
 export function generateStaticParams() {
   return episodes.map((e) => ({ slug: slugOf(e) }));
@@ -15,9 +23,11 @@ export async function generateMetadata({ params }: PageProps<"/episodes/[slug]">
   const ep = getEpisode(slug);
   if (!ep) return {};
   const who = [ep.guest, ep.company].filter(Boolean).join(", ");
-  const description = who
-    ? `${who} on ${site.name}: ${ep.title}. Live product demo and founder story.`
-    : `${ep.title}, on ${site.name}.`;
+  const description = ep.notes
+    ? truncate(ep.notes.replace(/\s+/g, " "), 158)
+    : who
+      ? `${who} on ${site.name}: ${ep.title}. Live product demo and founder story.`
+      : `${ep.title}, on ${site.name}.`;
   return {
     title: ep.title,
     description,
@@ -39,7 +49,24 @@ export default async function EpisodePage({ params }: PageProps<"/episodes/[slug
     thumbnailUrl: thumb(ep.id),
     embedUrl: `https://www.youtube.com/embed/${ep.id}`,
     url: watchUrl(ep.id),
+    ...(ep.published && { uploadDate: ep.published }),
+    ...(ep.lengthSeconds && { duration: isoDuration(ep.lengthSeconds) }),
+    // Chapters as "key moments" in Google results
+    ...(ep.chapters.length > 0 && {
+      hasPart: ep.chapters.map((c, i) => ({
+        "@type": "Clip",
+        name: c.title,
+        startOffset: c.start,
+        ...((ep.chapters[i + 1]?.start ?? ep.lengthSeconds) && {
+          endOffset: ep.chapters[i + 1]?.start ?? ep.lengthSeconds,
+        }),
+        url: `${watchUrl(ep.id)}&t=${c.start}s`,
+      })),
+    }),
   };
+  const published = ep.published
+    ? new Date(ep.published).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+    : null;
 
   return (
     <article className="pt-10">
@@ -48,27 +75,24 @@ export default async function EpisodePage({ params }: PageProps<"/episodes/[slug
 
       <div className="mt-6 grid gap-10 lg:grid-cols-[1fr_320px]">
         <div className="space-y-6">
-          <div className="aspect-video overflow-hidden rounded-2xl border border-line bg-black">
-            <iframe
-              className="h-full w-full"
-              src={`https://www.youtube-nocookie.com/embed/${ep.id}`}
-              title={ep.title}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-          <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-widest text-brand">
-              {ep.category} · {ep.kind === "tutorial" ? "Tutorial" : "Founder episode"} · {ep.duration}
-            </p>
-            <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{ep.title}</h1>
-          </div>
+          <EpisodePlayer id={ep.id} title={ep.title} chapters={ep.chapters}>
+            <div className="space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-widest text-brand">
+                {[ep.category, ep.kind === "tutorial" ? "Tutorial" : "Founder episode", ep.duration, published]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
+              <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{ep.title}</h1>
+            </div>
 
-          {ep.notes && <p className="text-lg leading-relaxed text-mute">{ep.notes}</p>}
+            {ep.notes?.split("\n\n").map((para) => (
+              <p key={para} className="text-lg leading-relaxed text-mute">{para}</p>
+            ))}
+          </EpisodePlayer>
 
           {ep.takeaways?.length ? (
             <div className="rounded-xl border border-line bg-panel p-6">
-              <h2 className="mb-3 font-semibold">Key takeaways</h2>
+              <h2 className="mb-3 font-semibold">{ep.autoTakeaways ? "In this episode" : "Key takeaways"}</h2>
               <ul className="list-disc space-y-2 pl-5 text-mute">
                 {ep.takeaways.map((t) => <li key={t}>{t}</li>)}
               </ul>

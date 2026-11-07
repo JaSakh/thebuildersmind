@@ -25,24 +25,36 @@ You need Node.js 20 or newer (`node -v` to check).
 | Apply / Sponsor / About pages | `src/app/apply`, `src/app/sponsor`, `src/app/about` |
 | Header / footer | `src/components/Header.tsx`, `Footer.tsx` |
 
-### Adding a new episode
-Copy one line in `src/lib/episodes.ts`, put it at the **top** (newest first), and change:
-- `id`: the part after `watch?v=` in the YouTube link
-- `title`, `guest`, `company`, `category`, `duration`
-- `kind`: `"episode"` for founder conversations, `"tutorial"` for how-to cuts
-- optional: `featured: true` puts it under "Most watched" on the home page
-- optional: `notes` and `takeaways`: a short summary and 3–5 bullet points.
-  **Fill these in.** They're what Google reads, so they bring in search traffic.
+### New episodes are added automatically
+Every morning (06:00 UTC) a GitHub Action reads the channel's feed and adds new long-form
+uploads (Shorts are skipped) to the top of `src/lib/episodes.ts`, then redeploys.
+It guesses the guest and company from the title, so **check each line marked
+`// auto-added`** and fix `guest`, `company`, `category` and `kind`
+(`"episode"` or `"tutorial"`), then delete the comment. Run `git pull` first, since the
+bot commits to `main`.
 
-The episode page, founder directory, sitemap and search all update automatically.
+Run it yourself any time: `node scripts/youtube.mjs`
+(add `--refresh` to re-read every video, e.g. after editing descriptions on YouTube).
+To keep a video off the site, add its ID to `IGNORE` in `scripts/youtube.mjs`.
+
+### Chapters, summary and topics come from the YouTube description
+`src/lib/youtube-data.json` is generated: don't edit it by hand. From each description it takes:
+- **Chapters**: timestamp lines (`00:00 Intro`). They appear as a clickable list on the
+  episode page and as "key moments" data for Google.
+- **Summary**: the opening paragraphs. Shown under the title and used as the search snippet.
+- **Topics**: the bullet list. Shown as "In this episode".
+
+To write your own instead, add `notes` and/or `takeaways` to the episode in `episodes.ts`;
+they take priority. Optional: `featured: true` puts an episode under "Most watched".
 
 ## Before going live: TODO list
-- [ ] `src/lib/site.ts`: real email, real domain, and check the social links
+- [ ] `src/lib/site.ts`: real email and real domain (social links are taken from the channel)
 - [ ] Forms: create a free form at formspree.io, copy `.env.example` → `.env.local`,
       and paste the endpoint. (Without it, forms open the visitor's email app.)
 - [ ] `src/app/about/page.tsx`: write the "why I started this" text in your own words
 - [ ] `src/app/sponsor/page.tsx`: add real audience numbers from YouTube Studio
-- [ ] Add `notes` + `takeaways` to your top 5 episodes
+- [ ] Optional: hand-written `notes` + `takeaways` for your top episodes (the YouTube
+      description is used until then)
 - [ ] Optional: replace `src/app/favicon.ico` with your logo
 
 ## Put it online (free): Cloudflare
@@ -67,7 +79,5 @@ Form endpoint for this build: Settings → Secrets and variables → Actions →
 `NEXT_PUBLIC_FORM_ENDPOINT`.
 
 ## Ideas for later
-- Pull new episodes automatically from the YouTube API instead of editing `episodes.ts`
-- Per-episode timestamps / chapters
 - A "tools featured on the show" page with affiliate links
 - Guest application tracker (Notion or Airtable via the form endpoint)

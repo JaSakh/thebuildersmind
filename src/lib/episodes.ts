@@ -1,7 +1,13 @@
+import youtubeData from "./youtube-data.json";
+
 // All episodes from youtube.com/@thebuildersmind (long-form videos, newest first).
 // To add an episode: copy an entry, paste the YouTube video ID, and fill in the fields.
 // `notes` and `takeaways` are optional — when filled in they appear on the episode page
 // (great for SEO: Google can't read your video, but it can read these).
+// Left empty, the page uses the summary and bullet points from the YouTube description.
+//
+// New uploads are added at the top automatically every morning (scripts/youtube.mjs).
+// Chapters, length and publish date come from YouTube: src/lib/youtube-data.json.
 
 export type Category =
   | "AI Agents"
@@ -26,7 +32,19 @@ export type Episode = {
   takeaways?: string[];
 };
 
-export const episodes: Episode[] = [
+export type Chapter = { start: number; title: string }; // start in seconds
+
+type YouTubeData = {
+  published?: string;
+  lengthSeconds?: number;
+  summary?: string;
+  topics?: string[];
+  chapters?: Chapter[];
+};
+const yt = youtubeData as Record<string, YouTubeData>;
+
+const list: Episode[] = [
+  // ↓ new episodes are inserted here, newest first
   { id: "GJxZslKw5wQ", title: "Beyond SEO & Ads: The New B2B Marketing Playbook", guest: "Vida Stanić", category: "Marketing & Sales", kind: "episode", duration: "35:47" },
   { id: "CNHmSMJVQhA", title: "The 2-Person Startup Building “Google Drive for AI Agents”", guest: "Ott Ilves", category: "AI Agents", kind: "episode", duration: "47:47" },
   { id: "DwgZEKRGIDo", title: "AI Agents That Play Video Games & Find Bugs", guest: "Emil", company: "ManaMind", category: "AI Agents", kind: "episode", duration: "44:06" },
@@ -80,6 +98,35 @@ export const categories: Category[] = [
   "Founder Stories",
 ];
 
+export type FullEpisode = Episode & {
+  published?: string;
+  lengthSeconds?: number;
+  chapters: Chapter[];
+  /** true when takeaways come from the YouTube description rather than being written by hand */
+  autoTakeaways: boolean;
+};
+
+export const formatTime = (sec: number) => {
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = String(sec % 60).padStart(2, "0");
+  return h ? `${h}:${String(m).padStart(2, "0")}:${s}` : `${m}:${s}`;
+};
+
+export const episodes: FullEpisode[] = list.map((e) => {
+  const d = yt[e.id] ?? {};
+  return {
+    ...e,
+    duration: e.duration || (d.lengthSeconds ? formatTime(d.lengthSeconds) : ""),
+    notes: e.notes ?? d.summary,
+    takeaways: e.takeaways ?? d.topics,
+    autoTakeaways: !e.takeaways && !!d.topics?.length,
+    published: d.published,
+    lengthSeconds: d.lengthSeconds,
+    chapters: d.chapters ?? [],
+  };
+});
+
 export function slugify(s: string) {
   return s
     .toLowerCase()
@@ -99,13 +146,13 @@ export function getEpisode(slug: string) {
   return episodes.find((e) => slugOf(e) === slug);
 }
 
-export function related(ep: Episode, n = 3) {
+export function related(ep: FullEpisode, n = 3) {
   return episodes
     .filter((e) => e.id !== ep.id && (e.category === ep.category || (ep.company && e.company === ep.company)))
     .slice(0, n);
 }
 
-export type Company = { name: string; category: Category; people: string[]; episodes: Episode[] };
+export type Company = { name: string; category: Category; people: string[]; episodes: FullEpisode[] };
 
 export function companies(): Company[] {
   const map = new Map<string, Company>();

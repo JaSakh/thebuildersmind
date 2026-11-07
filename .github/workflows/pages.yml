@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *" # daily, 06:00 UTC: pick up new YouTube uploads
 
 permissions:
   contents: read
@@ -15,10 +17,41 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Adds new uploads and chapters from YouTube (scripts/youtube.mjs) and commits them.
+  sync:
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+      - run: node scripts/youtube.mjs
+      - id: commit
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -am "Sync episodes from YouTube"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
   build:
+    needs: sync
+    # Every push and manual run; scheduled runs only when the sync changed something.
+    if: ${{ !failure() && !cancelled() && (github.event_name != 'schedule' || needs.sync.outputs.changed == 'true') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: main # include the sync commit, if any
       - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
