@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-bg: #0b0b0d;
+  --color-panel: #141418;
+  --color-line: #26262d;
+  --color-ink: #f2f2f3;
+  --color-mute: #9a9aa3;
+  --color-brand: #e5322d;
+  --color-brand-soft: #e5322d1f;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+::selection {
+  background: var(--color-brand);
+  color: white;
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(to right, #ffffff08 1px, transparent 1px),
+    linear-gradient(to bottom, #ffffff08 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at top, black 30%, transparent 75%);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.6rem;
+  padding: 0.7rem 1.1rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: transform 0.15s, background 0.15s, border-color 0.15s;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--color-brand); color: white; }
+.btn-primary:hover { background: #f0443f; }
+.btn-ghost { border: 1px solid var(--color-line); color: var(--color-ink); }
+.btn-ghost:hover { border-color: #3a3a44; background: #ffffff08; }
+
+.input {
+  width: 100%;
+  background: var(--color-bg);
+  border: 1px solid var(--color-line);
+  border-radius: 0.6rem;
+  padding: 0.7rem 0.9rem;
+  color: var(--color-ink);
+  font-size: 0.95rem;
+}
+.input:focus { outline: none; border-color: var(--color-brand); }
+.label { display: block; font-size: 0.85rem; color: var(--color-mute); margin-bottom: 0.35rem; }
