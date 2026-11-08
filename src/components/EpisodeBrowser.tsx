@@ -1,8 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { categories, episodes } from "@/lib/episodes";
+import { categories, episodes, type FullEpisode } from "@/lib/episodes";
 import EpisodeCard from "./EpisodeCard";
+
+// Everything a visitor might search for, including tools named in summaries and chapters.
+const searchText = (e: FullEpisode) =>
+  [e.title, e.guest, e.company, e.role, e.notes, ...(e.takeaways ?? []), ...e.chapters.map((c) => c.title)]
+    .join(" ")
+    .toLowerCase();
 
 export default function EpisodeBrowser() {
   const [q, setQ] = useState("");
@@ -15,7 +21,7 @@ export default function EpisodeBrowser() {
       (e) =>
         (cat === "All" || e.category === cat) &&
         (kind === "all" || e.kind === kind) &&
-        (!s || [e.title, e.guest, e.company].join(" ").toLowerCase().includes(s)),
+        (!s || searchText(e).includes(s)),
     );
   }, [q, cat, kind]);
 
@@ -29,7 +35,7 @@ export default function EpisodeBrowser() {
       <div className="flex flex-col gap-3 md:flex-row">
         <input
           className="input md:max-w-sm"
-          placeholder="Search founders, companies, topics…"
+          placeholder="Search founders, companies, tools, topics…"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           aria-label="Search episodes"

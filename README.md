@@ -51,6 +51,8 @@ they take priority. Optional: `featured: true` puts an episode under "Most watch
 
 ## Before going live: TODO list
 - [ ] `src/lib/site.ts`: real domain (email and social links are taken from the old site and the channel)
+- [ ] Newsletter: the signup boxes are placeholders. To activate, set `newsletterEnabled: true`
+      in `src/lib/site.ts` once the form endpoint below is set up
 - [ ] Forms: create a free form at formspree.io, copy `.env.example` → `.env.local`,
       and paste the endpoint. (Without it, forms open the visitor's email app.)
 - [ ] `src/app/about/page.tsx`: write the "why I started this" text in your own words

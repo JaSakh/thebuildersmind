@@ -35,7 +35,10 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t border-line py-6 text-center text-xs text-mute">
-        © {new Date().getFullYear()} {site.name} · Hosted by {site.host}
+        © {new Date().getFullYear()} {site.name} · Hosted by {site.host} · Website by{" "}
+        <a href={site.builtBy.url} target="_blank" rel="noopener" className="underline hover:text-ink">
+          {site.builtBy.name}
+        </a>
       </div>
     </footer>
   );

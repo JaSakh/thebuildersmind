@@ -16,6 +16,19 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: site.name,
+  url: site.url,
+  creator: {
+    "@type": "Person",
+    name: site.builtBy.name,
+    url: site.builtBy.url,
+    sameAs: [site.builtBy.url],
+  },
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -25,6 +38,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${GeistSans.variable} ${GeistMono.variable} h-full antialiased`}
     >
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd).replace(/</g, "\\u003c") }}
+        />
         {/* Scroll animations only hide content once we know scripts run; if they fail, everything shows. */}
         <script
           dangerouslySetInnerHTML={{

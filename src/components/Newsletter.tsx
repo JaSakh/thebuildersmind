@@ -1,3 +1,4 @@
+import { newsletterNote, site } from "@/lib/site";
 import SubmitForm from "./SubmitForm";
 
 export default function Newsletter({ compact = false }: { compact?: boolean }) {
@@ -18,6 +19,7 @@ export default function Newsletter({ compact = false }: { compact?: boolean }) {
           subject="Newsletter signup"
           submitLabel="Subscribe"
           success="You're in. Watch your inbox for the next episode."
+          comingSoon={site.newsletterEnabled ? undefined : newsletterNote}
           className={compact ? "flex flex-col gap-3" : "flex flex-col gap-3 sm:flex-row"}
         >
           <input

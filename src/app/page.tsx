@@ -3,8 +3,9 @@ import Link from "next/link";
 import EpisodeCard from "@/components/EpisodeCard";
 import FounderMarquee from "@/components/FounderMarquee";
 import Newsletter from "@/components/Newsletter";
+import SubmitForm from "@/components/SubmitForm";
 import { categories, companies, episodes, founders, slugOf, thumb } from "@/lib/episodes";
-import { site } from "@/lib/site";
+import { newsletterNote, site } from "@/lib/site";
 
 const delay = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 
@@ -40,6 +41,25 @@ export default function Home() {
             <div className="rise flex flex-wrap gap-3" style={delay(500)}>
               <Link href="/episodes/" className="btn btn-primary">Watch episodes</Link>
               <Link href="/apply/" className="btn btn-ghost">Demo your product →</Link>
+            </div>
+            <div className="rise max-w-md space-y-2 pt-1" style={delay(620)}>
+              <SubmitForm
+                subject="Newsletter signup"
+                submitLabel="Subscribe"
+                success="You're in. Watch your inbox for the next episode."
+                comingSoon={site.newsletterEnabled ? undefined : newsletterNote}
+                className="flex gap-2"
+              >
+                <input
+                  className="input min-w-0"
+                  type="email"
+                  name="email"
+                  required
+                  placeholder="you@startup.com"
+                  aria-label="Email address"
+                />
+              </SubmitForm>
+              <p className="text-sm text-mute">One email per episode: the product, the demo, the founder&apos;s key lesson.</p>
             </div>
           </div>
 

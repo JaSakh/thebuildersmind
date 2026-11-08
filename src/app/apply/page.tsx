@@ -68,6 +68,7 @@ export default function ApplyPage() {
           </div>
           <div><label className="label" htmlFor="pitch">What are you building, and what would you demo?</label><textarea id="pitch" name="pitch" required rows={4} className="input" /></div>
           <div><label className="label" htmlFor="story">The most interesting part of your story (a pivot, a number, a failure)</label><textarea id="story" name="story" rows={3} className="input" /></div>
+          <div><label className="label" htmlFor="stack">What&apos;s your tech stack? (optional)</label><input id="stack" name="stack" className="input" placeholder="e.g. Next.js, Supabase, Claude API" /></div>
           <div><label className="label" htmlFor="linkedin">LinkedIn (optional)</label><input id="linkedin" name="linkedin" className="input" /></div>
         </SubmitForm>
       </div>
