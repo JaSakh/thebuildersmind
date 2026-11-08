@@ -7,7 +7,7 @@ export const site = {
   tagline: "Live demos from Europe's top tech founders",
   description:
     "Every episode, a European founder shows their product live — AI tools, app builders, SaaS and no-code — and tells the real story behind it: early prototypes, pivots, and scaling.",
-  url: "https://thebuildersmind.com", // TODO: change to your real domain once you have one
+  url: "https://jasakh.github.io/thebuildersmind", // TODO: change to your real domain once you have one
   host: "Jahid Sakhi",
   builtBy: { name: "Basit Sakhi", url: "https://www.linkedin.com/in/basit-sakhi/" },
   email: "hello@buildersmind.com", // from the old site
