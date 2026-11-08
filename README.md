@@ -24,6 +24,8 @@ You need Node.js 20 or newer (`node -v` to check).
 | Home page | `src/app/page.tsx` |
 | Apply / Sponsor / About pages | `src/app/apply`, `src/app/sponsor`, `src/app/about` |
 | Header / footer | `src/components/Header.tsx`, `Footer.tsx` |
+| Animations | `src/components/Motion.tsx` (scroll and cursor), bottom of `src/app/globals.css` (styles) |
+| Team on the About page | `team` in `src/lib/site.ts` |
 
 ### New episodes are added automatically
 Every morning (06:00 UTC) a GitHub Action reads the channel's feed and adds new long-form
@@ -48,7 +50,7 @@ To write your own instead, add `notes` and/or `takeaways` to the episode in `epi
 they take priority. Optional: `featured: true` puts an episode under "Most watched".
 
 ## Before going live: TODO list
-- [ ] `src/lib/site.ts`: real email and real domain (social links are taken from the channel)
+- [ ] `src/lib/site.ts`: real domain (email and social links are taken from the old site and the channel)
 - [ ] Forms: create a free form at formspree.io, copy `.env.example` → `.env.local`,
       and paste the endpoint. (Without it, forms open the visitor's email app.)
 - [ ] `src/app/about/page.tsx`: write the "why I started this" text in your own words

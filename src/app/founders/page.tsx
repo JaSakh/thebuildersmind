@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PageHead from "@/components/PageHead";
-import { companies, slugOf } from "@/lib/episodes";
+import { companies, slugOf, thumb } from "@/lib/episodes";
 
 export const metadata: Metadata = {
   title: "Featured founders & products",
@@ -16,28 +16,48 @@ export default function FoundersPage() {
         A growing directory of European startups. Each one shows its product live, so you can see it
         work before you try it.
       </PageHead>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {list.map((c) => (
-          <div key={c.name} className="flex flex-col rounded-xl border border-line bg-panel p-5">
-            <div className="flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded-lg bg-brand-soft font-bold text-brand">
-                {c.name[0]}
-              </span>
-              <div>
-                <p className="font-semibold">{c.name}</p>
-                <p className="text-xs text-mute">{c.category}</p>
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {list.map((c) => {
+          const main = c.episodes.find((e) => e.kind === "episode") ?? c.episodes[0];
+          return (
+            <div
+              key={c.name}
+              data-reveal
+              className="spotlight group flex flex-col overflow-hidden rounded-xl border border-line bg-panel hover:-translate-y-1"
+            >
+              <Link href={`/episodes/${slugOf(main)}/`} className="relative block aspect-video overflow-hidden bg-black" tabIndex={-1} aria-hidden>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={thumb(main.id)}
+                  alt=""
+                  loading="lazy"
+                  className="h-full w-full object-cover opacity-90 transition duration-500 ease-out group-hover:scale-[1.07] group-hover:opacity-100"
+                />
+              </Link>
+              <div className="flex flex-1 flex-col p-5">
+                <p className="text-lg font-semibold">{c.name}</p>
+                <p className="text-xs font-medium uppercase tracking-wide text-brand">{c.category}</p>
+                {c.people.length > 0 && (
+                  <div className="mt-3 space-y-0.5 text-sm">
+                    {c.people.map((p) => (
+                      <p key={p.name}>
+                        <span className="font-medium">{p.name}</span>
+                        {p.role && <span className="text-mute"> · {p.role}</span>}
+                      </p>
+                    ))}
+                  </div>
+                )}
+                <div className="mt-4 space-y-1.5 border-t border-line pt-4">
+                  {c.episodes.map((e) => (
+                    <Link key={e.id} href={`/episodes/${slugOf(e)}/`} className="relative z-10 block text-sm transition-colors hover:text-brand">
+                      ▶ <span className="text-mute">{e.kind === "tutorial" ? "Tutorial" : "Episode"}:</span> {e.title}
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
-            {c.people.length > 0 && <p className="mt-4 text-sm text-mute">Founder: {c.people.join(", ")}</p>}
-            <div className="mt-4 space-y-1.5 border-t border-line pt-4">
-              {c.episodes.map((e) => (
-                <Link key={e.id} href={`/episodes/${slugOf(e)}/`} className="block text-sm hover:text-brand">
-                  ▶ <span className="text-mute">{e.kind === "tutorial" ? "Tutorial" : "Episode"}:</span> {e.title}
-                </Link>
-              ))}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </>
   );

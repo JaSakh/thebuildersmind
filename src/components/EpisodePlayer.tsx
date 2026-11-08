@@ -48,7 +48,7 @@ export default function EpisodePlayer({
       {children}
 
       {chapters.length > 0 && (
-        <div className="rounded-xl border border-line bg-panel p-6">
+        <div data-reveal className="rounded-xl border border-line bg-panel p-6">
           <h2 className="mb-3 font-semibold">Chapters</h2>
           <ol className="space-y-0.5">
             {chapters.map((c) => (

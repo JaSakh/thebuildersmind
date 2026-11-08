@@ -91,7 +91,7 @@ export default async function EpisodePage({ params }: PageProps<"/episodes/[slug
           </EpisodePlayer>
 
           {ep.takeaways?.length ? (
-            <div className="rounded-xl border border-line bg-panel p-6">
+            <div data-reveal className="rounded-xl border border-line bg-panel p-6">
               <h2 className="mb-3 font-semibold">{ep.autoTakeaways ? "In this episode" : "Key takeaways"}</h2>
               <ul className="list-disc space-y-2 pl-5 text-mute">
                 {ep.takeaways.map((t) => <li key={t}>{t}</li>)}
@@ -105,7 +105,9 @@ export default async function EpisodePage({ params }: PageProps<"/episodes/[slug
             <div className="rounded-xl border border-line bg-panel p-5">
               <p className="text-xs uppercase tracking-widest text-mute">On this episode</p>
               {ep.guest && <p className="mt-2 text-lg font-semibold">{ep.guest}</p>}
-              {ep.company && <p className="text-mute">{ep.company}</p>}
+              {(ep.role || ep.company) && (
+                <p className="text-mute">{[ep.role, ep.company].filter(Boolean).join(", ")}</p>
+              )}
             </div>
           )}
           <a href={watchUrl(ep.id)} target="_blank" rel="noopener" className="btn btn-ghost w-full justify-center">

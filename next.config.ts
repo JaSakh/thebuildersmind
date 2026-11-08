@@ -10,6 +10,8 @@ const basePath = process.env.PAGES_BASE_PATH || undefined;
 const nextConfig: NextConfig = {
   output: "export",
   basePath,
+  // Lets plain <img> tags find files in /public under the same base path.
+  env: { NEXT_PUBLIC_BASE_PATH: basePath ?? "" },
   trailingSlash: true,
   images: { unoptimized: true },
   turbopack: {

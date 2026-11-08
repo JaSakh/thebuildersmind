@@ -4,6 +4,7 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Motion from "@/components/Motion";
 import { site } from "@/lib/site";
 
 
@@ -17,11 +18,26 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable} h-full antialiased`}>
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+      className={`${GeistSans.variable} ${GeistMono.variable} h-full antialiased`}
+    >
+      <head>
+        {/* Scroll animations only hide content once we know scripts run; if they fail, everything shows. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "document.documentElement.classList.add('js');setTimeout(function(){if(!window.__motion)document.documentElement.classList.remove('js')},4000)",
+          }}
+        />
+      </head>
       <body className="flex min-h-full flex-col">
         <Header />
         <main className="mx-auto w-full max-w-6xl flex-1 px-5">{children}</main>
         <Footer />
+        <Motion />
       </body>
     </html>
   );

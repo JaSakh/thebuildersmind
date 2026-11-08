@@ -63,3 +63,132 @@ body {
 }
 .input:focus { outline: none; border-color: var(--color-brand); }
 .label { display: block; font-size: 0.85rem; color: var(--color-mute); margin-bottom: 0.35rem; }
+
+/* ---------- Motion ----------
+   Everything below is decoration: with JavaScript off or "reduce motion" on,
+   the page is fully visible and still. Reveal-on-scroll is driven by components/Motion.tsx. */
+
+:root { interpolate-size: allow-keywords; }
+html, body { overflow-x: clip; } /* keeps the glow orbs from widening the page on phones */
+
+@property --angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+
+@keyframes line-up { from { transform: translateY(110%); } to { transform: none; } }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes page-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes gradient-pan { to { background-position: 200% 0; } }
+@keyframes grid-pan { to { background-position: 48px 48px; } }
+@keyframes drift-a { 50% { transform: translate(70px, 50px) scale(1.15); } }
+@keyframes drift-b { 50% { transform: translate(-80px, -40px) scale(0.9); } }
+@keyframes float { 50% { transform: translateY(-10px); } }
+@keyframes ping { 75%, 100% { transform: scale(2.6); opacity: 0; } }
+@keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 #e5322d80; } 100% { box-shadow: 0 0 0 22px #e5322d00; } }
+@keyframes marquee { to { transform: translateX(calc(-100% - var(--gap))); } }
+@keyframes spin-angle { to { --angle: 360deg; } }
+
+.page-in { animation: page-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* Hero */
+.hero-line { display: block; overflow: clip; padding-bottom: 0.14em; margin-bottom: -0.14em; }
+.hero-line > span { display: inline-block; animation: line-up 0.95s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms) both; }
+.rise { animation: rise 0.85s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms) both; }
+.text-gradient {
+  background: linear-gradient(90deg, #ff4a3d, #ff8a3c, #ffb86b, #ff8a3c, #ff4a3d) 0 0 / 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-pan 8s linear infinite;
+}
+.grid-pan { animation: grid-pan 14s linear infinite; }
+.orb { position: absolute; z-index: -10; border-radius: 9999px; filter: blur(90px); pointer-events: none; }
+.orb-a { top: -6rem; left: -8rem; width: 30rem; height: 30rem; background: #e5322d38; animation: drift-a 16s ease-in-out infinite; }
+.orb-b { top: 12rem; right: -8rem; width: 26rem; height: 26rem; background: #f9731e2e; animation: drift-b 20s ease-in-out infinite; }
+.float { animation: float 7s ease-in-out infinite; }
+[data-tilt] { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform 0.25s ease-out, box-shadow 0.25s; }
+.ping { position: relative; }
+.ping::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: inherit; animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite; }
+.pulse-ring { animation: pulse-ring 2s ease-out infinite; }
+
+/* Reveal on scroll */
+[data-reveal] {
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms),
+    translate 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+html.js [data-reveal]:not([data-in]) { opacity: 0; transform: translateY(26px); }
+html.js [data-reveal="scale"]:not([data-in]) { transform: scale(0.95); }
+
+/* Header */
+header[data-scrolled] { background: #0b0b0df2; box-shadow: 0 10px 30px -18px #000; }
+.scroll-progress {
+  position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+  background: linear-gradient(90deg, #e5322d, #ff8a3c);
+  transform: scaleX(0); transform-origin: left;
+}
+.nav-link { position: relative; padding: 0.25rem 0; transition: color 0.2s; }
+.nav-link::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, #e5322d, #ff8a3c);
+  transform: scaleX(0); transform-origin: right; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-link:hover::after, .nav-link[data-active]::after { transform: scaleX(1); transform-origin: left; }
+.nav-link[data-active] { color: var(--color-ink); }
+.logo-mark { transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+a:hover > .logo-mark { transform: rotate(-12deg) scale(1.08); }
+
+/* Buttons */
+.btn { position: relative; overflow: hidden; flex-shrink: 0; white-space: nowrap; transition: transform 0.2s, background-position 0.4s, background-color 0.2s, border-color 0.2s, box-shadow 0.25s; }
+.btn:hover { transform: translateY(-1px); }
+.btn-primary { background: linear-gradient(100deg, #e5322d, #ea4a1f, #e5322d) 0 0 / 200% 100%; }
+.btn-primary:hover { background: linear-gradient(100deg, #e5322d, #ea4a1f, #e5322d) 100% 0 / 200% 100%; box-shadow: 0 8px 26px -8px #e5322dcc; }
+.btn-primary::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%;
+  background: linear-gradient(100deg, transparent, #ffffff55, transparent);
+  transform: skewX(-20deg); transition: left 0.6s; pointer-events: none;
+}
+.btn-primary:hover::after { left: 130%; }
+
+/* Cursor-following glow on cards */
+.spotlight { position: relative; }
+.spotlight::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity 0.3s;
+  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), #ff6a3d26, transparent 70%);
+}
+.spotlight:hover::after { opacity: 1; }
+.spotlight:hover { border-color: #e5322d73; box-shadow: 0 16px 40px -22px #e5322d99; }
+
+/* Slowly travelling light around a card's border */
+.glow-border { position: relative; }
+.glow-border::before {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1.5px; pointer-events: none;
+  background: conic-gradient(from var(--angle), transparent 62%, #e5322d, #ff8a3c, transparent);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: spin-angle 7s linear infinite;
+}
+
+/* Founder strip */
+.marquee {
+  --gap: 0.75rem; display: flex; gap: var(--gap); overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+.marquee-track { display: flex; flex-shrink: 0; gap: var(--gap); min-width: 100%; animation: marquee var(--speed, 75s) linear infinite; }
+.marquee[data-reverse] .marquee-track { animation-direction: reverse; }
+.marquee:hover .marquee-track, .marquee:focus-within .marquee-track { animation-play-state: paused; }
+
+/* FAQ opens smoothly where the browser supports it */
+details::details-content { block-size: 0; overflow: clip; transition: block-size 0.35s cubic-bezier(0.16, 1, 0.3, 1), content-visibility 0.35s allow-discrete; }
+details[open]::details-content { block-size: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  html.js [data-reveal]:not([data-in]) { opacity: 1; transform: none; }
+  .marquee { overflow-x: auto; }
+  .marquee-track[aria-hidden] { display: none; }
+}
+@media print {
+  html.js [data-reveal]:not([data-in]) { opacity: 1; transform: none; }
+}

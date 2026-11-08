@@ -7,8 +7,13 @@ export const site = {
     "Every episode, a European founder shows their product live — AI tools, app builders, SaaS and no-code — and tells the real story behind it: early prototypes, pivots, and scaling.",
   url: "https://thebuildersmind.com", // TODO: change to your real domain once you have one
   host: "Jahid Sakhi",
-  email: "hello@thebuildersmind.com", // TODO: replace with a real inbox
+  email: "hello@buildersmind.com", // from the old site
   cadence: "New episodes every 1–2 weeks",
+  // From the old site's About page
+  team: [
+    { name: "Jahid Sakhi", role: "Host", photo: "/team/jahid-sakhi.jpg", linkedin: "https://www.linkedin.com/in/jahid-sakhi-0831a8176/" },
+    { name: "Laila Ratmane", role: "Growth", photo: "/team/laila-ratmane.jpg", linkedin: "https://www.linkedin.com/in/laila-ratmane/" },
+  ],
   links: {
     youtube: "https://www.youtube.com/@thebuildersmind",
     youtubeSubscribe: "https://www.youtube.com/@thebuildersmind?sub_confirmation=1",
