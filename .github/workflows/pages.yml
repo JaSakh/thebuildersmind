@@ -70,6 +70,8 @@ jobs:
 
   deploy:
     needs: build
+    # Needed because `sync` is skipped on pushes, and skipped jobs otherwise skip everything after them.
+    if: ${{ !failure() && !cancelled() && needs.build.result == 'success' }}
     runs-on: ubuntu-latest
     environment:
       name: github-pages
